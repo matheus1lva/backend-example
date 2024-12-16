@@ -1,28 +1,35 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import { meetingRoutes } from './routes/meetings.js';
-import { taskRoutes } from './routes/task.router.js';
-import { dashboardRoutes } from "./routes/dashboardRoutes.js";
-import { authMiddleware } from './auth.middleware.js';
+import app from "@/app";
+import { appConfig } from "@/config/app.config";
+import { mongoConnect, mongoDisconnect } from "@/database";
+import { logger } from "@/utils";
+import "dotenv/config";
+import type { Server } from "node:http";
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+let server: Server;
 
-await mongoose.connect('mongodb://localhost:27017/meetingbot')
-  .then((conn) => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+async function handleShutdown() {
+  server.close(() => {
+    logger.info("Server closed");
+  });
+  try {
+    await mongoDisconnect();
+  } catch (err) {
+    logger.error("Error disconnecting from MongoDB:", err);
+  }
+}
 
-app.use(express.json());
+async function bootstrap() {
+  try {
+    await mongoConnect();
+    server = app.listen(appConfig.PORT, () => {
+      console.log(`Server is running on port ${appConfig.PORT}`);
+    });
+  } catch (err) {
+    logger.error("failed to start server", err);
+  }
+}
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the MeetingBot API' });
-});
+bootstrap();
 
-app.use('/api/meetings', authMiddleware, meetingRoutes);
-app.use('/api/tasks', authMiddleware, taskRoutes);
-app.use('/api/dashboard', authMiddleware, dashboardRoutes);
-
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+process.on("SIGINT", handleShutdown);
+process.on("SIGTERM", handleShutdown);

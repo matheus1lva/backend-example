@@ -8,6 +8,8 @@ export interface AppConfig {
     windowMs: number;
     limit: number;
   };
+  JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
 }
 
 export const appConfig: AppConfig = {
@@ -20,4 +22,6 @@ export const appConfig: AppConfig = {
     windowMs: 15 * 60 * 1000,
     limit: 100,
   },
+  JWT_SECRET: process.env.JWT_SECRET || "qwertyuiopasdfghjklzxcvbnm123456",
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1d",
 };

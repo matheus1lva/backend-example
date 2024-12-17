@@ -1,37 +1,11 @@
-import express from "express";
-import mongoose, { Types } from "mongoose";
-import { AuthenticatedRequest } from "../auth.middleware.js";
-import { Meeting } from "../modules/meetings/meeting.js";
-
-interface UpcomingMeeting {
-  _id: Types.ObjectId;
-  title: string;
-  date: Date;
-  participantCount: number;
-}
-
-interface OverdueTask {
-  _id: Types.ObjectId;
-  title: string;
-  dueDate: Date;
-  meetingId: Types.ObjectId;
-  meetingTitle: string;
-}
-
-interface DashboardData {
-  totalMeetings: number;
-  taskSummary: {
-    pending: number;
-    inProgress: number;
-    completed: number;
-  };
-  upcomingMeetings: UpcomingMeeting[];
-  overdueTasks: OverdueTask[];
-}
+import { DashboardData } from "@/modules/dashboard/types";
+import { Meeting } from "@/modules/meetings/meetings.model";
+import express, { Request } from "express";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
-router.get("/", async (req: AuthenticatedRequest, res) => {
+router.get("/", async (req: Request, res) => {
   // TODO: fix this
   // it should be sorted by date, only include upcoming meetings, limit to 5 and only include the _id, title, date, and participantCount fields
   const upcomingMeetings = (await Meeting.find()).map((meeting) => {

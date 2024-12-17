@@ -1,19 +1,35 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import { Container } from "typedi";
+import { AuthService } from "../modules/auth/auth.service";
 
-export interface AuthenticatedRequest extends Request {
-  userId?: string;
+declare global {
+  namespace Express {
+    interface Request {
+      userId: string;
+    }
+  }
 }
 
 export const authMiddleware = (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): void => {
-  const userId = req.header("x-user-id");
-  if (!userId) {
+  const authHeader = req.header("Authorization");
+
+  if (!authHeader?.startsWith("Bearer ")) {
     res.status(401).json({ message: "Authentication required" });
     return;
   }
-  req.userId = userId;
-  next();
+
+  const token = authHeader.split(" ")[1];
+  const authService = Container.get(AuthService);
+
+  try {
+    const { userId } = authService.verifyToken(token);
+    req.userId = userId;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Invalid or expired token" });
+  }
 };

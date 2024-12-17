@@ -5,26 +5,30 @@
   "type": "module",
   "scripts": {
     "start": "node --import=tsx src/server.ts",
-    "seed": "node --import=tsx src/seed.ts"
+    "seed": "node --import=tsx src/scripts/database.seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/compression": "^1.7.5",
+    "reflect-metadata": "^0.2.2",
+    "throw-http-errors": "^4.0.1",
+    "typedi": "^0.10.0",
     "compression": "^1.7.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.1",
-    "express-rate-limit": "^7.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.0.1",
+    "express-rate-limit": "^7.4.1",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
-    "throw-http-errors": "^4.0.1",
-    "winston": "^3.17.0"
+    "openai": "^4.71.1",
+    "winston": "^3.16.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/compression": "^1.7.5",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mongoose": "^5.11.97",

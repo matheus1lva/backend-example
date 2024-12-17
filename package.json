@@ -12,9 +12,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "reflect-metadata": "^0.2.2",
-    "throw-http-errors": "^4.0.1",
-    "typedi": "^0.10.0",
     "compression": "^1.7.5",
     "dotenv": "^16.4.5",
     "express": "^5.0.1",
@@ -23,9 +20,12 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
-    "openai": "^4.71.1",
+    "openai": "^4.77.0",
+    "reflect-metadata": "^0.2.2",
+    "throw-http-errors": "^4.0.1",
+    "typedi": "^0.10.0",
     "winston": "^3.16.0",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/compression": "^1.7.5",

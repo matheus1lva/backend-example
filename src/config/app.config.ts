@@ -10,6 +10,7 @@ export interface AppConfig {
   };
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
+  OPENAI_API_KEY: string;
 }
 
 export const appConfig: AppConfig = {
@@ -24,4 +25,5 @@ export const appConfig: AppConfig = {
   },
   JWT_SECRET: process.env.JWT_SECRET || "qwertyuiopasdfghjklzxcvbnm123456",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1d",
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
 };

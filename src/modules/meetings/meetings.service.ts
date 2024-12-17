@@ -1,17 +1,24 @@
+import { AiService } from "@/modules/ai/ai.service";
+import { MeetingsRepository } from "@/modules/meetings/meetings.repository";
+import { httpErrors } from "throw-http-errors/dist/httpErrors";
 import { Service } from "typedi";
-import { Meeting, IMeeting } from "./meetings.model";
 import { TasksService } from "../tasks/tasks.service";
+import { IMeeting, Meeting } from "./meetings.model";
 
 @Service()
 export class MeetingsService {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+    private readonly aiService: AiService,
+    private readonly meetingsRepository: MeetingsRepository
+  ) {}
 
-  async getMeetings(userId: string): Promise<IMeeting[]> {
-    return Meeting.find({ userId });
+  async getMeetings(userId: string) {
+    return this.meetingsRepository.getMeetings(userId);
   }
 
-  async getMeetingById(userId: string, meetingId: string): Promise<IMeeting | null> {
-    return Meeting.findOne({ _id: meetingId, userId });
+  async getMeetingById(meetingId: string, userId: string) {
+    return this.meetingsRepository.getMeetingById(meetingId, userId);
   }
 
   async createMeeting(
@@ -41,74 +48,69 @@ export class MeetingsService {
     );
   }
 
-  async summarizeMeeting(
-    userId: string,
-    meetingId: string
-  ): Promise<IMeeting | null> {
-    const meeting = await this.getMeetingById(userId, meetingId);
-    if (!meeting || !meeting.transcript) {
-      throw new Error("Meeting not found or no transcript available");
-    }
-
-    // Mock AI service response
-    const mockAiResponse = {
-      summary: `Summary of meeting "${meeting.title}"`,
-      actionItems: [
-        `Review documentation for ${meeting.title}`,
-        `Schedule follow-up meeting with team`,
-        `Send meeting notes to participants`,
-      ],
-    };
-
-    // Update meeting with summary and action items
-    const updatedMeeting = await Meeting.findOneAndUpdate(
-      { _id: meetingId, userId },
-      {
-        summary: mockAiResponse.summary,
-        actionItems: mockAiResponse.actionItems,
-      },
-      { new: true }
+  async summarizeMeeting(userId: string, meetingId: string) {
+    const meeting = await this.meetingsRepository.getMeetingById(
+      meetingId,
+      userId
     );
 
-    // Create tasks from action items
-    if (updatedMeeting) {
+    if (!meeting || !meeting.transcript) {
+      throw new httpErrors.NotFound("Meeting not found");
+    }
+
+    try {
+      const summaryResponse = await this.aiService.summarizeMeeting({
+        title: meeting.title,
+        transcript: meeting.transcript,
+      });
+
+      await this.meetingsRepository.updateMeeting({
+        id: meetingId,
+        summary: summaryResponse.summary,
+        actionItems: summaryResponse.tasks.map((task) => task.title),
+      });
+
       await this.tasksService.createTasksFromActionItems(
         userId,
         meetingId,
-        mockAiResponse.actionItems
+        summaryResponse.tasks.map((task) => task.title)
       );
-    }
 
-    return updatedMeeting;
+      return this.meetingsRepository.getMeetingById(meetingId, userId);
+    } catch (error) {
+      console.error("Error in summarizeMeeting:", error);
+      throw new Error("Failed to generate meeting summary");
+    }
   }
 
   async getMeetingStats(userId: string) {
-    const [
-      totalMeetings,
-      participantStats,
-      upcomingMeetings,
-    ] = await Promise.all([
-      Meeting.countDocuments({ userId }),
-      Meeting.aggregate([
-        { $match: { userId } },
-        { $unwind: "$participants" },
-        { $group: {
-          _id: "$participants",
-          count: { $sum: 1 }
-        }},
-        { $sort: { count: -1 } },
-        { $limit: 5 }
-      ]),
-      Meeting.find({
-        userId,
-        date: { $gte: new Date() }
-      }).sort({ date: 1 }).limit(5)
-    ]);
+    const [totalMeetings, participantStats, upcomingMeetings] =
+      await Promise.all([
+        Meeting.countDocuments({ userId }),
+        Meeting.aggregate([
+          { $match: { userId } },
+          { $unwind: "$participants" },
+          {
+            $group: {
+              _id: "$participants",
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+          { $limit: 5 },
+        ]),
+        Meeting.find({
+          userId,
+          date: { $gte: new Date() },
+        })
+          .sort({ date: 1 })
+          .limit(5),
+      ]);
 
     const averageParticipants = await Meeting.aggregate([
       { $match: { userId } },
       { $project: { participantCount: { $size: "$participants" } } },
-      { $group: { _id: null, average: { $avg: "$participantCount" } } }
+      { $group: { _id: null, average: { $avg: "$participantCount" } } },
     ]);
 
     return {

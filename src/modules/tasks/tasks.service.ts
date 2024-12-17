@@ -1,25 +1,28 @@
+import { Types } from "mongoose";
 import { Service } from "typedi";
-import { Task, ITask } from "./tasks.model";
+import { ITask, Task } from "./tasks.model";
+import { TasksRepository } from "./tasks.repository";
 
 @Service()
 export class TasksService {
+  constructor(private readonly tasksRepository: TasksRepository) {}
+
   async getTasks(userId: string): Promise<ITask[]> {
-    return Task.find({ userId });
+    return this.tasksRepository.getAll({ userId });
   }
 
   async createTask(
     userId: string,
-    meetingId: string,
+    meetingId: Types.ObjectId,
     title: string,
     dueDate: Date
   ): Promise<ITask> {
-    const task = new Task({
+    return this.tasksRepository.createTask({
       userId,
       meetingId,
       title,
       dueDate,
     });
-    return task.save();
   }
 
   async createTasksFromActionItems(
@@ -40,28 +43,20 @@ export class TasksService {
         })
     );
 
-    return Task.insertMany(tasks);
+    return this.tasksRepository.batchCreateTasks(tasks);
   }
 
-  async updateTaskStatus(taskId: string, status: ITask["status"]): Promise<ITask | null> {
-    return Task.findByIdAndUpdate(
-      taskId,
-      { status },
-      { new: true }
-    );
+  async updateTaskStatus(
+    taskId: string,
+    status: ITask["status"]
+  ): Promise<ITask | null> {
+    return this.tasksRepository.updateTaskStatus(taskId, status);
   }
 
   async getTaskStats(userId: string) {
     const [tasksByStatus, overdueTasks] = await Promise.all([
-      Task.aggregate([
-        { $match: { userId } },
-        { $group: { _id: "$status", count: { $sum: 1 } } },
-      ]),
-      Task.countDocuments({
-        userId,
-        status: "pending",
-        dueDate: { $lt: new Date() },
-      }),
+      this.tasksRepository.getTaskStats(userId),
+      this.tasksRepository.getOverdueTasksCount(userId),
     ]);
 
     return {

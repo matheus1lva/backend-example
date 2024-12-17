@@ -1,7 +1,7 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 export interface ITask extends Document {
-  meetingId: mongoose.Types.ObjectId;
+  meetingId: Types.ObjectId;
   userId: string;
   title: string;
   description: string;

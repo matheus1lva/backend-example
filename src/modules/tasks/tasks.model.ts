@@ -23,3 +23,5 @@ const taskSchema = new Schema<ITask>({
 });
 
 export const Task = mongoose.model<ITask>("Task", taskSchema);
+Task.collection.createIndex({ userId: 1, status: 1, dueDate: 1 });
+Task.collection.createIndex({ meetingId: 1 });

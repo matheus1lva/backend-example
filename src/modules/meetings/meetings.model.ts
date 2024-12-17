@@ -21,3 +21,5 @@ const meetingSchema = new Schema<IMeeting>({
 });
 
 export const Meeting = mongoose.model<IMeeting>("Meeting", meetingSchema);
+Meeting.collection.createIndex({ userId: 1, date: 1 });
+Meeting.collection.createIndex({ userId: 1 });

@@ -1,36 +1,37 @@
+import { createMeetingSchema } from "@/modules/meetings/schemas/create-meeting-input.schema";
+import { updateTranscriptSchema } from "@/modules/meetings/schemas/update-transcript.schema";
 import express from "express";
 import { Container } from "typedi";
+import { validateRequestBody } from "zod-express-middleware";
 import { MeetingsController } from "./meetings.controller";
 
 const router = express.Router();
 const meetingsController = Container.get(MeetingsController);
 
-// Get all meetings
 router.get("/", (req, res) => {
   return meetingsController.getMeetings(req, res);
 });
 
-// Get meeting stats
 router.get("/stats", (req, res) => {
   meetingsController.getMeetingStats(req, res);
 });
 
-// Get meeting by ID
 router.get("/:id", async (req, res) => {
   meetingsController.getMeetingById(req, res);
 });
 
-// Create new meeting
-router.post("/", (req, res) => {
+router.post("/", validateRequestBody(createMeetingSchema), (req, res) => {
   meetingsController.createMeeting(req, res);
 });
 
-// Update meeting transcript
-router.put("/:id/transcript", (req, res) => {
-  meetingsController.updateTranscript(req, res);
-});
+router.put(
+  "/:id/transcript",
+  validateRequestBody(updateTranscriptSchema),
+  (req, res) => {
+    meetingsController.updateTranscript(req, res);
+  }
+);
 
-// Generate meeting summary and action items
 router.post("/:id/summarize", (req, res) => {
   meetingsController.summarizeMeeting(req, res);
 });

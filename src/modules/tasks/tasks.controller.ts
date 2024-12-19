@@ -1,7 +1,8 @@
+import { httpErrors } from "@/utils";
 import { Request, Response } from "express";
 import { Service } from "typedi";
-import { TasksService } from "./tasks.service";
 import { AuthService } from "../auth/auth.service";
+import { TasksService } from "./tasks.service";
 
 @Service()
 export class TasksController {
@@ -18,7 +19,7 @@ export class TasksController {
       const tasks = await this.tasksService.getTasks(userId);
       res.json(tasks);
     } catch (err) {
-      res.status(500).json({ message: "Error fetching tasks" });
+      throw new httpErrors.InternalServerError("Error fetching tasks");
     }
   }
 }

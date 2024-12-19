@@ -1,4 +1,5 @@
 import { AuthService } from "@/modules/auth/auth.service";
+import { httpErrors } from "@/utils";
 import type { Request, Response } from "express";
 import { Service } from "typedi";
 import { DashboardService } from "./dashboard.service";
@@ -11,9 +12,7 @@ export class DashboardController {
   ) {}
 
   async getDashboard(req: Request, res: Response) {
-    const { userId } = this.authService.verifyToken(
-      req.headers.authorization as string
-    );
+    const userId = req.userId;
 
     try {
       const dashboardData = await this.dashboardService.getDashboardData(
@@ -21,7 +20,7 @@ export class DashboardController {
       );
       res.json(dashboardData);
     } catch (err) {
-      res.status(500).json({ message: (err as Error).message });
+      throw new httpErrors.InternalServerError("Error fetching dashboard data");
     }
   }
 }

@@ -2,13 +2,25 @@ import { Types } from "mongoose";
 import { Service } from "typedi";
 import { ITask } from "./tasks.model";
 import { TasksRepository } from "./tasks.repository";
+import { RedisService } from "@/modules/redis/redis.service";
 
 @Service()
 export class TasksService {
-  constructor(private readonly tasksRepository: TasksRepository) {}
+  constructor(
+    private readonly tasksRepository: TasksRepository,
+    private readonly redisService: RedisService
+  ) {}
 
   async getTasks(userId: string): Promise<ITask[]> {
-    return this.tasksRepository.getAll({ userId });
+    const cacheKey = `tasks:${userId}`;
+    const cachedData = await this.redisService.get<ITask[]>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const tasks = await this.tasksRepository.getAll({ userId });
+    await this.redisService.set(cacheKey, tasks, 300);
+    return tasks;
   }
 
   async createTask(
@@ -17,12 +29,16 @@ export class TasksService {
     title: string,
     dueDate: Date
   ): Promise<ITask> {
-    return this.tasksRepository.createTask({
+    const task = await this.tasksRepository.createTask({
       userId,
       meetingId,
       title,
       dueDate,
     });
+
+    await this.redisService.del(`tasks:${userId}`);
+    await this.redisService.del(`taskStats:${userId}`);
+    return task;
   }
 
   async createTasksFromActionItems(
@@ -31,7 +47,7 @@ export class TasksService {
     actionItems: string[]
   ) {
     const dueDate = new Date();
-    dueDate.setDate(dueDate.getDate() + 7); // Set due date to 1 week from now
+    dueDate.setDate(dueDate.getDate() + 7);
 
     const tasks = actionItems.map((item) => ({
       userId,
@@ -40,17 +56,33 @@ export class TasksService {
       dueDate,
     }));
 
-    return this.tasksRepository.batchCreateTasks(tasks);
+    const createdTasks = await this.tasksRepository.batchCreateTasks(tasks);
+    await this.redisService.del(`tasks:${userId}`);
+    await this.redisService.del(`taskStats:${userId}`);
+    return createdTasks;
   }
 
   async updateTaskStatus(
     taskId: string,
     status: ITask["status"]
   ): Promise<ITask | null> {
-    return this.tasksRepository.updateTaskStatus(taskId, status);
+    const task = await this.tasksRepository.updateTaskStatus(taskId, status);
+    if (task) {
+      await this.redisService.del(`tasks:${task.userId}`);
+      await this.redisService.del(`taskStats:${task.userId}`);
+    }
+    return task;
   }
 
   async getTaskStats(userId: string) {
-    return this.tasksRepository.getTaskStats(userId);
+    const cacheKey = `taskStats:${userId}`;
+    const cachedData = await this.redisService.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const stats = await this.tasksRepository.getTaskStats(userId);
+    await this.redisService.set(cacheKey, stats, 300);
+    return stats;
   }
 }

@@ -9,6 +9,7 @@ describe("TasksService", () => {
   const userId = "user123";
   const taskId = mockObjectId();
   const meetingId = mockObjectId();
+  let mockRedisService: any;
 
   beforeEach(() => {
     mockTasksRepository = {
@@ -21,7 +22,13 @@ describe("TasksService", () => {
       countMeetingsByUserId: vi.fn(),
     };
 
-    service = new TasksService(mockTasksRepository);
+    mockRedisService = {
+      get: vi.fn(),
+      del: vi.fn(),
+      set: vi.fn(),
+    };
+
+    service = new TasksService(mockTasksRepository, mockRedisService);
   });
 
   describe("getTasks", () => {

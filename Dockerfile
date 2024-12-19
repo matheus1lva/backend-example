@@ -1,20 +1,25 @@
-# Use Node.js LTS as the base image
-FROM node:20-slim
+FROM node:20-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies
 RUN yarn install --frozen-lockfile
 
-# Copy the rest of the application
 COPY . .
 
-# Expose the port your app runs on
-EXPOSE 3000
+RUN yarn build
 
-# Start the application
-CMD ["yarn", "start"]
+FROM node:20-slim
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install --frozen-lockfile --production
+
+COPY --from=builder /app/dist ./dist
+
+EXPOSE $PORT
+
+CMD ["node", "dist/index.js"]

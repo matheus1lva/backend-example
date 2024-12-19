@@ -2,13 +2,11 @@ import { mockDate, mockObjectId } from "@/test/utils";
 import { Types } from "mongoose";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TasksService } from "./tasks.service";
-import { ITask } from "@/modules/tasks/tasks.model";
 
 describe("TasksService", () => {
   let service: TasksService;
   let mockTasksRepository: any;
-
-  const userId = mockObjectId();
+  const userId = "user123";
   const taskId = mockObjectId();
   const meetingId = mockObjectId();
 
@@ -50,13 +48,18 @@ describe("TasksService", () => {
       mockTasksRepository.createTask.mockResolvedValue(mockTask);
 
       const result = await service.createTask(
-        taskInput.userId,
-        taskInput.meetingId,
+        userId,
+        new Types.ObjectId(meetingId),
         taskInput.title,
         taskInput.dueDate
       );
 
-      expect(mockTasksRepository.createTask).toHaveBeenCalledWith(taskInput);
+      expect(mockTasksRepository.createTask).toHaveBeenCalledWith({
+        userId,
+        meetingId: new Types.ObjectId(meetingId),
+        title: taskInput.title,
+        dueDate: taskInput.dueDate,
+      });
       expect(result).toEqual(mockTask);
     });
   });
@@ -69,7 +72,6 @@ describe("TasksService", () => {
         userId,
         meetingId,
         title,
-        dueDate: expect.any(Date),
       }));
 
       mockTasksRepository.batchCreateTasks.mockResolvedValue(mockTasks);
@@ -85,7 +87,7 @@ describe("TasksService", () => {
 
       // Verify that due date is set to 1 week from now
       const tasks = mockTasksRepository.batchCreateTasks.mock.calls[0][0];
-      tasks.forEach((task: ITask) => {
+      tasks.forEach((task: any) => {
         const dueDate = new Date(task.dueDate);
         const oneWeekFromNow = new Date();
         oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
@@ -114,15 +116,17 @@ describe("TasksService", () => {
   describe("getTaskStats", () => {
     it("should get task statistics", async () => {
       const mockStats = {
-        total: 8,
-        completed: 3,
-        pending: 5,
-        overdue: 2,
+        tasksByStatus: {
+          pending: 5,
+          completed: 3,
+          overdue: 0,
+        },
+        overdueTasks: 2,
       };
 
       mockTasksRepository.getTaskStats.mockResolvedValue([
-        { status: "pending", count: 5 },
-        { status: "completed", count: 3 },
+        { _id: "pending", count: 5 },
+        { _id: "completed", count: 3 },
       ]);
       mockTasksRepository.getOverdueTasksCount.mockResolvedValue(2);
 

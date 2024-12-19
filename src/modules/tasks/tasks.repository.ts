@@ -1,4 +1,5 @@
 import { ITask, Task } from "@/modules/tasks/tasks.model";
+import { CreateTask } from "@/modules/tasks/types/create-task.type";
 import { Service } from "typedi";
 
 @Service()
@@ -11,7 +12,7 @@ export class TasksRepository {
     return task.save();
   }
 
-  batchCreateTasks(tasks: ITask[]) {
+  batchCreateTasks(tasks: CreateTask[]) {
     return Task.insertMany(tasks);
   }
 

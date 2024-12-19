@@ -27,10 +27,6 @@ export class MeetingsRepository {
     );
   }
 
-  async countMeetings(userId: string) {
-    return Meeting.countDocuments({ userId });
-  }
-
   async countMeetingsByUserId(userId: string) {
     return Meeting.countDocuments({ userId });
   }
@@ -146,7 +142,9 @@ export class MeetingsRepository {
       meetingsByDayOfWeek: Array.from({ length: 7 }, (_, i) => ({
         dayOfWeek: i + 1,
         count: (
-          stats.meetingsByDayOfWeek.find((d: { dayOfWeek: number; count: number }) => d.dayOfWeek === i + 1) || {
+          stats.meetingsByDayOfWeek.find(
+            (d: { dayOfWeek: number; count: number }) => d.dayOfWeek === i + 1
+          ) || {
             count: 0,
           }
         ).count,

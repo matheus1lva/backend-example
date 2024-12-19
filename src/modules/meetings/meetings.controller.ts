@@ -14,8 +14,16 @@ export class MeetingsController {
   async getMeetings(req: Request, res: Response) {
     try {
       const userId = req.userId;
-      const meetings = await this.meetingsService.getMeetings(userId);
-      res.json(meetings);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const result = await this.meetingsService.getMeetings(
+        userId,
+        page,
+        limit
+      );
+
+      res.json(result);
     } catch (err) {
       logger.error("Error fetching meetings", {
         userId: req.userId,

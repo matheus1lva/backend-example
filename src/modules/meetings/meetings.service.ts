@@ -13,8 +13,19 @@ export class MeetingsService {
     private readonly meetingsRepository: MeetingsRepository
   ) {}
 
-  async getMeetings(userId: string) {
-    return this.meetingsRepository.getMeetings(userId);
+  async getMeetings(userId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [meetings, total] = await Promise.all([
+      this.meetingsRepository.getMeetings(userId, skip, limit),
+      this.meetingsRepository.countMeetings(userId),
+    ]);
+
+    return {
+      data: meetings,
+      total,
+      page,
+      limit,
+    };
   }
 
   async getMeetingById(meetingId: string, userId: string) {
@@ -86,40 +97,6 @@ export class MeetingsService {
   }
 
   async getMeetingStats(userId: string) {
-    const [totalMeetings, participantStats, upcomingMeetings] =
-      await Promise.all([
-        Meeting.countDocuments({ userId }),
-        Meeting.aggregate([
-          { $match: { userId } },
-          { $unwind: "$participants" },
-          {
-            $group: {
-              _id: "$participants",
-              count: { $sum: 1 },
-            },
-          },
-          { $sort: { count: -1 } },
-          { $limit: 5 },
-        ]),
-        Meeting.find({
-          userId,
-          date: { $gte: new Date() },
-        })
-          .sort({ date: 1 })
-          .limit(5),
-      ]);
-
-    const averageParticipants = await Meeting.aggregate([
-      { $match: { userId } },
-      { $project: { participantCount: { $size: "$participants" } } },
-      { $group: { _id: null, average: { $avg: "$participantCount" } } },
-    ]);
-
-    return {
-      totalMeetings,
-      averageParticipants: Math.floor(averageParticipants[0]?.average || 0),
-      mostFrequentParticipants: participantStats,
-      upcomingMeetings,
-    };
+    return this.meetingsRepository.getMeetingStats(userId);
   }
 }

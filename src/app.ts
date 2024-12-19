@@ -11,6 +11,8 @@ import { dashboardRoutes } from "@/modules/dashboard/dashboard.router";
 import { meetingRoutes } from "@/modules/meetings/meetings.router";
 import { taskRoutes } from "@/modules/tasks/tasks.router";
 import express from "express";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.config";
 
 const app = express();
 
@@ -20,6 +22,9 @@ app.use(compressionMiddleware);
 app.use(jsonParserMiddleware);
 app.use(urlencodedMiddleware);
 app.use(loggerMiddleware);
+
+// Swagger Documentation
+app.use("/api", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(authMiddleware);
 // Routes

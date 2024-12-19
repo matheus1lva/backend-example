@@ -19,6 +19,11 @@ npm run seed
 npm start
 ```
 
+## API Documentation
+
+The API documentation is available through Swagger UI at `/api` when the server is running.
+You can explore and test all available endpoints through the interactive documentation interface.
+
 ## Docker Setup
 
 ```bash
@@ -30,6 +35,7 @@ Services:
 - Backend: `localhost:3000`
 - MongoDB: `localhost:27017`
 - Redis: `localhost:6379`
+- Swagger UI: `localhost:3000/api`
 
 ## Contributing
 

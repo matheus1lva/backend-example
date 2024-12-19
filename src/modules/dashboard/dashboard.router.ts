@@ -1,6 +1,6 @@
 import { DashboardController } from "@/modules/dashboard/dashboard.controller";
 import express, { Request } from "express";
-import Container from "typedi";
+import { Container } from "typedi";
 
 const router = express.Router();
 const dashboardController = Container.get(DashboardController);

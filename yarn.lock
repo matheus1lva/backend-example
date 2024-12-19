@@ -2004,7 +2004,7 @@ text-hex@1.0.x:
 
 throw-http-errors@^4.0.1:
   version "4.0.1"
-  resolved "https://registry.npmjs.org/throw-http-errors/-/throw-http-errors-4.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/throw-http-errors/-/throw-http-errors-4.0.1.tgz#c07604c289d50e4ccc9b6cf5e94d4072b05cf000"
   integrity sha512-3S9iNGPf5b38DMNYCiVrR12lRWIczmV0rzDiVoVHRc6wXUf+4W4wA0XU6hQD83xVJPMRPpu2K2ki9+s+hw0sVQ==
 
 tinybench@^2.9.0:

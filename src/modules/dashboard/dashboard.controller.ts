@@ -1,7 +1,7 @@
-import { httpErrors } from "@/utils";
 import type { Request, Response } from "express";
 import { Service } from "typedi";
 import { DashboardService } from "./dashboard.service";
+import { logger } from "@/utils";
 
 @Service()
 export class DashboardController {
@@ -15,7 +15,8 @@ export class DashboardController {
       );
       res.json(dashboardData);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error fetching dashboard data");
+      logger.error("Error fetching dashboard data", { userId, error: err });
+      res.status(500).json({ error: "Error fetching dashboard data" });
     }
   }
 }

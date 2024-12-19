@@ -29,7 +29,7 @@ export class TasksService {
     userId: string,
     meetingId: string,
     actionItems: string[]
-  ): Promise<ITask[]> {
+  ) {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7); // Set due date to 1 week from now
 
@@ -51,20 +51,5 @@ export class TasksService {
     status: ITask["status"]
   ): Promise<ITask | null> {
     return this.tasksRepository.updateTaskStatus(taskId, status);
-  }
-
-  async getTaskStats(userId: string) {
-    const [tasksByStatus, overdueTasks] = await Promise.all([
-      this.tasksRepository.getTaskStats(userId),
-      this.tasksRepository.getOverdueTasksCount(userId),
-    ]);
-
-    return {
-      tasksByStatus: tasksByStatus.reduce(
-        (acc, { _id, count }) => ({ ...acc, [_id]: count }),
-        { pending: 0, completed: 0, overdue: 0 }
-      ),
-      overdueTasks,
-    };
   }
 }

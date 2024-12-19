@@ -1,8 +1,8 @@
-import { httpErrors } from "@/utils";
 import type { Request, Response } from "express";
 import { Service } from "typedi";
 import { AuthService } from "../auth/auth.service";
 import { MeetingsService } from "./meetings.service";
+import { logger } from "@/utils";
 
 @Service()
 export class MeetingsController {
@@ -17,23 +17,37 @@ export class MeetingsController {
       const meetings = await this.meetingsService.getMeetings(userId);
       res.json(meetings);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error fetching meetings");
+      logger.error("Error fetching meetings", {
+        userId: req.userId,
+        error: err,
+      });
+      res.status(500).json({ error: "Error fetching meetings" });
     }
   }
 
   async getMeetingById(req: Request, res: Response) {
     try {
       const userId = req.userId;
+      const meetingId = req.params.id;
+
       const meeting = await this.meetingsService.getMeetingById(
         userId,
-        req.params.id
+        meetingId
       );
+
       if (!meeting) {
-        throw new httpErrors.NotFound("Meeting not found");
+        logger.warn("Meeting not found", { userId, meetingId });
+        return res.status(404).json({ error: "Meeting not found" });
       }
+
       res.json(meeting);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error fetching meeting");
+      logger.error("Error fetching meeting", {
+        userId: req.userId,
+        meetingId: req.params.id,
+        error: err,
+      });
+      res.status(500).json({ error: "Error fetching meeting" });
     }
   }
 
@@ -51,46 +65,77 @@ export class MeetingsController {
 
       res.status(201).json(meeting);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error creating meeting");
+      logger.error("Error creating meeting", {
+        userId: req.userId,
+        title: req.body.title,
+        error: err,
+      });
+      res.status(500).json({ error: "Error creating meeting" });
     }
   }
 
   async updateTranscript(req: Request, res: Response) {
     try {
       const userId = req.userId;
+      const meetingId = req.params.id;
       const { transcript } = req.body;
+
+      if (!transcript) {
+        logger.warn("Missing transcript in request", { userId, meetingId });
+        return res.status(400).json({ error: "Transcript is required" });
+      }
 
       const meeting = await this.meetingsService.updateTranscript(
         userId,
-        req.params.id,
+        meetingId,
         transcript
       );
 
       if (!meeting) {
-        throw new httpErrors.NotFound("Meeting not found");
+        logger.warn("Meeting not found for transcript update", {
+          userId,
+          meetingId,
+        });
+        return res.status(404).json({ error: "Meeting not found" });
       }
 
       res.json(meeting);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error updating transcript");
+      logger.error("Error updating transcript", {
+        userId: req.userId,
+        meetingId: req.params.id,
+        error: err,
+      });
+      res.status(500).json({ error: "Error updating transcript" });
     }
   }
 
   async summarizeMeeting(req: Request, res: Response) {
     try {
       const userId = req.userId;
+      const meetingId = req.params.id;
+
       const meeting = await this.meetingsService.summarizeMeeting(
         userId,
-        req.params.id
+        meetingId
       );
 
       if (!meeting) {
-        throw new httpErrors.NotFound("Meeting not found");
+        logger.warn("Meeting not found for summarization", {
+          userId,
+          meetingId,
+        });
+        return res.status(404).json({ error: "Meeting not found" });
       }
 
       res.json(meeting);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error summarizing meeting");
+      logger.error("Error summarizing meeting", {
+        userId: req.userId,
+        meetingId: req.params.id,
+        error: err,
+      });
+      res.status(500).json({ error: "Error summarizing meeting" });
     }
   }
 
@@ -100,7 +145,11 @@ export class MeetingsController {
       const stats = await this.meetingsService.getMeetingStats(userId);
       res.json(stats);
     } catch (err) {
-      throw new httpErrors.InternalServerError("Error fetching meeting stats");
+      logger.error("Error fetching meeting stats", {
+        userId: req.userId,
+        error: err,
+      });
+      res.status(500).json({ error: "Error fetching meeting stats" });
     }
   }
 }

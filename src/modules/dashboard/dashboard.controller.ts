@@ -15,6 +15,7 @@ export class DashboardController {
       );
       res.json(dashboardData);
     } catch (err) {
+      console.log(err);
       logger.error("Error fetching dashboard data", { userId, error: err });
       res.status(500).json({ error: "Error fetching dashboard data" });
     }

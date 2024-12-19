@@ -6,7 +6,9 @@ export const createMeetingSchema = z.object({
     .min(1, "Title is required")
     .max(200, "Title must be less than 200 characters")
     .trim(),
-  date: z.date().min(new Date(), "Date must be in the future"),
+  date: z.string().refine((date) => !isNaN(Date.parse(date)), {
+    message: "Invalid date format",
+  }),
   participants: z
     .array(
       z

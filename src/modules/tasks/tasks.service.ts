@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Service } from "typedi";
-import { ITask, Task } from "./tasks.model";
+import { ITask } from "./tasks.model";
 import { TasksRepository } from "./tasks.repository";
 
 @Service()
@@ -33,15 +33,12 @@ export class TasksService {
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7); // Set due date to 1 week from now
 
-    const tasks = actionItems.map(
-      (item) =>
-        new Task({
-          userId,
-          meetingId,
-          title: item,
-          dueDate,
-        })
-    );
+    const tasks = actionItems.map((item) => ({
+      userId,
+      meetingId,
+      title: item,
+      dueDate,
+    }));
 
     return this.tasksRepository.batchCreateTasks(tasks);
   }

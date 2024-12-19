@@ -31,8 +31,8 @@ export class MeetingsController {
       const meetingId = req.params.id;
 
       const meeting = await this.meetingsService.getMeetingById(
-        userId,
-        meetingId
+        meetingId,
+        userId
       );
 
       if (!meeting) {

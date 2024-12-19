@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import '@/config/container';
+import "@/config/container";
 import app from "@/app";
 import { appConfig } from "@/config/app.config";
 import { mongoConnect, mongoDisconnect } from "@/database";

@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --import=tsx src/server.ts",
+    "start": "node --import=tsx --watch src/server.ts",
     "seed": "node --import=tsx src/scripts/database.seed.ts",
     "test": "vitest",
     "test:watch": "vitest watch",
@@ -38,7 +38,6 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.5",
-    "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",

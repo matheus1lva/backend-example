@@ -64,19 +64,21 @@ export class MeetingsService {
         transcript: meeting.transcript,
       });
 
-      await this.meetingsRepository.updateMeeting({
-        id: meetingId,
-        summary: summaryResponse.summary,
-        actionItems: summaryResponse.tasks.map((task) => task.title),
-      });
+      const [, , updatedMeeting] = await Promise.all([
+        this.meetingsRepository.updateMeeting({
+          id: meetingId,
+          summary: summaryResponse.summary,
+          actionItems: summaryResponse.tasks.map((task) => task.title),
+        }),
+        this.tasksService.createTasksFromActionItems(
+          userId,
+          meetingId,
+          summaryResponse.tasks.map((task) => task.title)
+        ),
+        this.meetingsRepository.getMeetingById(meetingId, userId),
+      ]);
 
-      await this.tasksService.createTasksFromActionItems(
-        userId,
-        meetingId,
-        summaryResponse.tasks.map((task) => task.title)
-      );
-
-      return this.meetingsRepository.getMeetingById(meetingId, userId);
+      return updatedMeeting;
     } catch (error) {
       console.error("Error in summarizeMeeting:", error);
       throw new Error("Failed to generate meeting summary");
@@ -115,7 +117,7 @@ export class MeetingsService {
 
     return {
       totalMeetings,
-      averageParticipants: averageParticipants[0]?.average || 0,
+      averageParticipants: Math.floor(averageParticipants[0]?.average || 0),
       mostFrequentParticipants: participantStats,
       upcomingMeetings,
     };

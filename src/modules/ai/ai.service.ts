@@ -2,22 +2,20 @@ import {
   SummaryAndActionsResponseParams,
   summaryAndActionsResponseSchema,
 } from "@/modules/meetings/schemas/summary-response.schema";
+import { MeetingSummaryRequest } from "@/modules/meetings/types";
 import { logger } from "@/utils";
-import console from "console";
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { Service } from "typedi";
-import type { MeetingSummaryRequest } from "./types";
 
 @Service()
 export class AiService {
-  client: any;
+  client: OpenAI | undefined;
+
   constructor() {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      logger.warn(
-        "OpenAI credentials not provided, skipping service initialization"
-      );
+      logger.warn("OpenAI credentials not provided");
       return;
     }
     this.client = new OpenAI({ apiKey });
@@ -27,6 +25,10 @@ export class AiService {
     title,
     transcript,
   }: MeetingSummaryRequest): Promise<SummaryAndActionsResponseParams> {
+    if (!this.client) {
+      throw new Error("OpenAI client not initialized");
+    }
+
     try {
       const summaryResponse = await this.client.beta.chat.completions.parse({
         model: "gpt-4o",
@@ -78,7 +80,7 @@ ${transcript}`,
 
       return parsedMeetingSummaryAndActionItems;
     } catch (error) {
-      console.error("Error in AI service summarizeMeeting:", error);
+      logger.error("Error in summarizeMeeting:", error);
       throw new Error("Failed to generate meeting summary");
     }
   }

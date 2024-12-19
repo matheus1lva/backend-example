@@ -1,5 +1,5 @@
 import { UpcomingMeeting } from "@/modules/meetings/types";
-import { OverdueTask } from "@/modules/tasks/types";
+import { OverdueTask } from "@/modules/tasks/types/overdue-task.type";
 
 export interface DashboardData {
   totalMeetings: number;

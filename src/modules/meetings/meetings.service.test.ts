@@ -1,19 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MeetingsService } from './meetings.service';
-import { MeetingsRepository } from './meetings.repository';
-import { AiService } from '@/modules/ai/ai.service';
-import { TasksService } from '@/modules/tasks/tasks.service';
-import { Meeting } from './meetings.model';
-import { mockDate, mockObjectId } from '@/test/utils';
-import { httpErrors } from 'throw-http-errors';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { createMockMongooseModel, mockDate, mockObjectId } from "@/test/utils";
 
-vi.mock('./meetings.model', () => ({
-  Meeting: {
-    ...createMockMongooseModel(),
-  },
-}));
+const mockModel = createMockMongooseModel();
 
-describe('MeetingsService', () => {
+vi.mock("./meetings.model");
+vi.mock("@/modules/ai/ai.service");
+
+import { MeetingsService } from "./meetings.service";
+import { Meeting } from "./meetings.model";
+import { httpErrors } from "@/utils";
+
+describe("MeetingsService", () => {
   let service: MeetingsService;
   let mockMeetingsRepository: any;
   let mockAiService: any;
@@ -42,8 +39,8 @@ describe('MeetingsService', () => {
     );
   });
 
-  describe('getMeetings', () => {
-    it('should get all meetings for a user', async () => {
+  describe("getMeetings", () => {
+    it("should get all meetings for a user", async () => {
       const mockMeetings = [{ _id: meetingId, userId }];
       mockMeetingsRepository.getMeetings.mockResolvedValue(mockMeetings);
 
@@ -54,29 +51,32 @@ describe('MeetingsService', () => {
     });
   });
 
-  describe('getMeetingById', () => {
-    it('should get a specific meeting', async () => {
+  describe("getMeetingById", () => {
+    it("should get a specific meeting", async () => {
       const mockMeeting = { _id: meetingId, userId };
       mockMeetingsRepository.getMeetingById.mockResolvedValue(mockMeeting);
 
       const result = await service.getMeetingById(meetingId, userId);
 
-      expect(mockMeetingsRepository.getMeetingById).toHaveBeenCalledWith(meetingId, userId);
+      expect(mockMeetingsRepository.getMeetingById).toHaveBeenCalledWith(
+        meetingId,
+        userId
+      );
       expect(result).toEqual(mockMeeting);
     });
   });
 
-  describe('createMeeting', () => {
-    it('should create a new meeting', async () => {
+  describe("createMeeting", () => {
+    it("should create a new meeting", async () => {
       const mockMeeting = {
         userId,
-        title: 'Test Meeting',
+        title: "Test Meeting",
         date: mockDate,
-        participants: ['user1', 'user2'],
+        participants: ["user1", "user2"],
         save: vi.fn().mockResolvedValue({ _id: meetingId }),
       };
 
-      vi.spyOn(Meeting.prototype, 'save').mockResolvedValue(mockMeeting);
+      vi.spyOn(Meeting.prototype, "save").mockResolvedValue(mockMeeting);
 
       const result = await service.createMeeting(
         userId,
@@ -90,18 +90,18 @@ describe('MeetingsService', () => {
     });
   });
 
-  describe('summarizeMeeting', () => {
-    it('should summarize a meeting and create tasks', async () => {
+  describe("summarizeMeeting", () => {
+    it("should summarize a meeting and create tasks", async () => {
       const mockMeeting = {
         _id: meetingId,
         userId,
-        title: 'Test Meeting',
-        transcript: 'Meeting transcript',
+        title: "Test Meeting",
+        transcript: "Meeting transcript",
       };
 
       const mockSummaryResponse = {
-        summary: 'Meeting summary',
-        tasks: [{ title: 'Task 1' }, { title: 'Task 2' }],
+        summary: "Meeting summary",
+        tasks: [{ title: "Task 1" }, { title: "Task 2" }],
       };
 
       mockMeetingsRepository.getMeetingById.mockResolvedValue(mockMeeting);
@@ -109,7 +109,7 @@ describe('MeetingsService', () => {
       mockMeetingsRepository.updateMeeting.mockResolvedValue({
         ...mockMeeting,
         summary: mockSummaryResponse.summary,
-        actionItems: mockSummaryResponse.tasks.map(t => t.title),
+        actionItems: mockSummaryResponse.tasks.map((t) => t.title),
       });
 
       const result = await service.summarizeMeeting(userId, meetingId);
@@ -121,33 +121,35 @@ describe('MeetingsService', () => {
       expect(mockTasksService.createTasksFromActionItems).toHaveBeenCalledWith(
         userId,
         meetingId,
-        mockSummaryResponse.tasks.map(t => t.title)
+        mockSummaryResponse.tasks.map((t) => t.title)
       );
       expect(result).toBeDefined();
     });
 
-    it('should throw NotFound if meeting is not found', async () => {
+    it("should throw NotFound if meeting is not found", async () => {
       mockMeetingsRepository.getMeetingById.mockResolvedValue(null);
 
-      await expect(service.summarizeMeeting(userId, meetingId))
-        .rejects
-        .toThrow(httpErrors.NotFound);
+      await expect(service.summarizeMeeting(userId, meetingId)).rejects.toThrow(
+        httpErrors.NotFound
+      );
     });
 
-    it('should throw error if AI service fails', async () => {
+    it("should throw error if AI service fails", async () => {
       const mockMeeting = {
         _id: meetingId,
         userId,
-        title: 'Test Meeting',
-        transcript: 'Meeting transcript',
+        title: "Test Meeting",
+        transcript: "Meeting transcript",
       };
 
       mockMeetingsRepository.getMeetingById.mockResolvedValue(mockMeeting);
-      mockAiService.summarizeMeeting.mockRejectedValue(new Error('AI service error'));
+      mockAiService.summarizeMeeting.mockRejectedValue(
+        new Error("AI service error")
+      );
 
-      await expect(service.summarizeMeeting(userId, meetingId))
-        .rejects
-        .toThrow('Failed to generate meeting summary');
+      await expect(service.summarizeMeeting(userId, meetingId)).rejects.toThrow(
+        "Failed to generate meeting summary"
+      );
     });
   });
 });

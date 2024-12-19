@@ -1,4 +1,5 @@
 import { IMeeting, Meeting } from "@/modules/meetings/meetings.model";
+import { Types } from "mongoose";
 import { Service } from "typedi";
 
 @Service()
@@ -21,5 +22,35 @@ export class MeetingsRepository {
       },
       { new: true }
     );
+  }
+
+  async countMeetingsByUserId(userId: string) {
+    return Meeting.countDocuments({ userId });
+  }
+
+  async getUpcomingMeetings(
+    userId: string,
+    limit = 5
+  ): Promise<
+    {
+      _id: Types.ObjectId;
+      title: string;
+      date: Date;
+      participantCount: number;
+    }[]
+  > {
+    return await Meeting.aggregate([
+      { $match: { userId, date: { $gte: new Date() } } },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          date: 1,
+          participantCount: { $size: "$participants" },
+        },
+      },
+      { $sort: { date: 1 } },
+      { $limit: limit },
+    ]);
   }
 }

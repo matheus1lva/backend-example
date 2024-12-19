@@ -132,19 +132,56 @@ describe("TasksRepository", () => {
     });
   });
 
-  describe("getOverdueTasksCount", () => {
-    it("should get count of overdue tasks", async () => {
-      const mockCount = 2;
-      vi.mocked(Task.countDocuments).mockResolvedValue(mockCount);
+  describe("getOverdueTasks", () => {
+    it("should return overdue tasks with meeting information", async () => {
+      const mockDate = new Date();
+      const mockTasks = [
+        {
+          _id: "task1",
+          title: "Task 1",
+          dueDate: mockDate,
+          meetingId: "meeting1",
+          meetingTitle: "Meeting 1",
+        },
+      ];
 
-      const result = await repository.getOverdueTasksCount(userId);
+      vi.mocked(Task.aggregate).mockResolvedValue(mockTasks);
 
-      expect(Task.countDocuments).toHaveBeenCalledWith({
-        userId,
-        status: "pending",
-        dueDate: { $lt: expect.any(Date) },
-      });
-      expect(result).toBe(mockCount);
+      const result = await repository.getOverdueTasks(userId);
+
+      expect(Task.aggregate).toHaveBeenCalledWith([
+        {
+          $match: {
+            userId,
+            dueDate: { $lt: expect.any(Date) },
+            status: { $ne: "completed" },
+          },
+        },
+        {
+          $lookup: {
+            from: "meetings",
+            localField: "meetingId",
+            foreignField: "_id",
+            as: "meeting",
+          },
+        },
+        { $unwind: "$meeting" },
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            dueDate: 1,
+            meetingId: "$meeting._id",
+            meetingTitle: "$meeting.title",
+          },
+        },
+        {
+          $sort: {
+            dueDate: 1,
+          },
+        },
+      ]);
+      expect(result).toEqual(mockTasks);
     });
   });
 });

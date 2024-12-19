@@ -1,13 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MeetingsRepository } from './meetings.repository';
-import { Meeting } from './meetings.model';
-import { createMockMongooseModel, mockObjectId } from '@/test/utils';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { createMockMongooseModel, mockObjectId } from "@/test/utils";
 
-vi.mock('./meetings.model', () => ({
-  Meeting: createMockMongooseModel(),
+const mockModel = createMockMongooseModel();
+
+vi.mock("./meetings.model", () => ({
+  Meeting: mockModel,
 }));
 
-describe('MeetingsRepository', () => {
+import { MeetingsRepository } from "./meetings.repository";
+import { Meeting } from "./meetings.model";
+
+describe("MeetingsRepository", () => {
   let repository: MeetingsRepository;
   const userId = mockObjectId();
   const meetingId = mockObjectId();
@@ -17,8 +20,8 @@ describe('MeetingsRepository', () => {
     vi.clearAllMocks();
   });
 
-  describe('getMeetings', () => {
-    it('should get all meetings for a user', async () => {
+  describe("getMeetings", () => {
+    it("should get all meetings for a user", async () => {
       const mockMeetings = [{ _id: meetingId, userId }];
       vi.mocked(Meeting.find).mockResolvedValue(mockMeetings);
 
@@ -29,8 +32,8 @@ describe('MeetingsRepository', () => {
     });
   });
 
-  describe('getMeetingById', () => {
-    it('should get a specific meeting by id and userId', async () => {
+  describe("getMeetingById", () => {
+    it("should get a specific meeting by id and userId", async () => {
       const mockMeeting = { _id: meetingId, userId };
       vi.mocked(Meeting.findOne).mockResolvedValue(mockMeeting);
 
@@ -41,17 +44,17 @@ describe('MeetingsRepository', () => {
     });
   });
 
-  describe('updateMeeting', () => {
-    it('should update a meeting', async () => {
+  describe("updateMeeting", () => {
+    it("should update a meeting", async () => {
       const updateData = {
         _id: meetingId,
-        title: 'Updated Title',
-        transcript: 'Updated transcript',
-        summary: 'Updated summary',
-        actionItems: ['task1', 'task2'],
+        title: "Updated Title",
+        transcript: "Updated transcript",
+        summary: "Updated summary",
+        actionItems: ["task1", "task2"],
       };
       const mockUpdatedMeeting = { ...updateData };
-      
+
       vi.mocked(Meeting.findOneAndUpdate).mockResolvedValue(mockUpdatedMeeting);
 
       const result = await repository.updateMeeting(updateData);

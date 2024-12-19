@@ -1,4 +1,3 @@
-import { AuthService } from "@/modules/auth/auth.service";
 import { httpErrors } from "@/utils";
 import type { Request, Response } from "express";
 import { Service } from "typedi";
@@ -6,14 +5,10 @@ import { DashboardService } from "./dashboard.service";
 
 @Service()
 export class DashboardController {
-  constructor(
-    private readonly dashboardService: DashboardService,
-    private readonly authService: AuthService
-  ) {}
+  constructor(private readonly dashboardService: DashboardService) {}
 
   async getDashboard(req: Request, res: Response) {
     const userId = req.userId;
-
     try {
       const dashboardData = await this.dashboardService.getDashboardData(
         userId

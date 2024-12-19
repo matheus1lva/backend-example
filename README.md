@@ -1,78 +1,76 @@
-# Fireflies.ai backend test
+# Fireflies.ai Backend Test
 
-This project looks awful, somebody really messed it up. Can you help us fix it?
+A Node.js backend service for managing meetings, tasks, and transcripts with MongoDB.
 
-## Instructions
+## Prerequisites
 
-Create a fork of this repository, and set up the project locally.
-Ensure that you have MongoDB running locally, and node v22.
+- Node.js v22
+- MongoDB
+- Docker (optional)
 
+## Development Setup
+
+### Local Development
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd backend-example
 ```
-npm i
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Ensure MongoDB is running locally on the default port (27017)
+
+4. Seed the database with initial data:
+
+```bash
 npm run seed
+```
+
+5. Start the development server:
+
+```bash
 npm start
 ```
 
-### Project Setup:
+The server will be available at `http://localhost:3000`
 
-- Organize the project structure to improve maintainability (if you think it's necessary). ✅
-- Add basic error handling and input validation to all endpoints.
-- It seems there is a very critical bug here. Can you spot it?
-- Also, it doesn't look very performant as the meeting count increases. Would it scale?
-- (Bonus) Implement basic unit tests for at least one endpoint.
+## Docker Setup
 
-It should not take you more than **2-3 hours** to implement this.
+1. Build the Docker image:
 
-### API
+```bash
+docker build -t fireflies-backend .
+```
 
-By the end of the project, we should have the following endpoints implemented:
+2. Run the container:
 
-- `GET /api/meetings`
+```bash
+docker run -p 3000:3000 -e MONGODB_URI=mongodb://host.docker.internal:27017/fireflies fireflies-backend
+```
 
-Retrieves all the meetings for the user. ✅
+Note: Use `host.docker.internal` to connect to your local MongoDB from inside the container. If you're using Docker Compose or a different MongoDB setup, adjust the connection string accordingly.
 
-- `POST /api/meetings`
+## Project Structure
 
-Create a new meeting with title, date, and participants. ✅
+The project follows a clean architecture pattern with the following structure:
 
-- `GET /api/meetings/:id`
+- `/routes` - API route definitions
+- `/controllers` - Request handlers
+- `/models` - MongoDB schemas
+- `/services` - Business logic
+- `/middleware` - Custom middleware functions
 
-Retrieve a specific meeting by ID. Include its tasks. ✅
+## Contributing
 
-- `PUT /api/meetings/:id/transcript` ✅
-
-Update a meeting with its transcript.
-
-- `POST /api/meetings/:id/summarize` ⚠️
-
-Generate a summary and action items for a meeting (you can use a mock AI service for this).
-Once the AI service returns the action items, you should automatically create the tasks for this meeting.
-
-- `GET /api/tasks` ✅
-
-Returns all the tasks assigned to the user
-
-- `GET /api/meetings/stats` ✅
-
-Return statistics about meetings, such as the total number of meetings, average number of participants, and most frequent participants.
-Please follow the data structure defined in the router file.
-
-- (Bonus) `GET /api/dashboard`✅
-
-Return a summary of the user's meetings, including count and upcoming meetings, task counts by status, and past due tasks. The data structure is also defined in the endpoint file.
-
-### Containerize it!
-
-You should add a Dockerfile and include clear instructions about how to run this on our local environment. The easier, the better.
-In order to evaluate it, we'll run it on our local hosts, seeding with known data and will compare the output of the requested endpoints.
-
-## Evaluation Criteria:
-
-We want you to impress us with your attention to detail, but some points that will be evaluated are:
-
-- Documentation - clear instructions on a README file are the other developer's best friend.
-- Code quality and organization - we can only scale if we have high-quality, maintainable code
-- Ability to identify and fix the existing bug - security bugs would be a disaster for the company
-- Implementation of the stats (and the bonus, dashboard) endpoints using performant, aggregation queries
-- Error handling and input validation
-- Bonus points for unit tests or any additional features related to the AI bot concept
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request

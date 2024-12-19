@@ -10,6 +10,7 @@ import { TasksService } from "@/modules/tasks/tasks.service";
 import { TasksController } from "@/modules/tasks/tasks.controller";
 import { AuthService } from "@/modules/auth/auth.service";
 import { AiService } from "@/modules/ai/ai.service";
+import { RedisService } from "@/modules/redis/redis.service";
 
 // Repositories
 Container.set(MeetingsRepository, new MeetingsRepository());
@@ -19,6 +20,7 @@ Container.set(TasksRepository, new TasksRepository());
 Container.set(AuthService, new AuthService());
 Container.set(AiService, new AiService());
 Container.set(TasksService, new TasksService(Container.get(TasksRepository)));
+Container.set(RedisService, new RedisService());
 
 Container.set(
   MeetingsService,
@@ -33,14 +35,15 @@ Container.set(
   DashboardService,
   new DashboardService(
     Container.get(MeetingsRepository),
-    Container.get(TasksRepository)
+    Container.get(TasksRepository),
+    Container.get(RedisService)
   )
 );
 
 // Controllers
 Container.set(
   TasksController,
-  new TasksController(Container.get(TasksService), Container.get(AuthService))
+  new TasksController(Container.get(TasksService))
 );
 
 Container.set(

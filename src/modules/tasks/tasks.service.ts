@@ -49,4 +49,8 @@ export class TasksService {
   ): Promise<ITask | null> {
     return this.tasksRepository.updateTaskStatus(taskId, status);
   }
+
+  async getTaskStats(userId: string) {
+    return this.tasksRepository.getTaskStats(userId);
+  }
 }

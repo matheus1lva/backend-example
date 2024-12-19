@@ -18,6 +18,7 @@ describe("TasksService", () => {
       updateTaskStatus: vi.fn(),
       getTaskStats: vi.fn(),
       getOverdueTasksCount: vi.fn(),
+      countMeetingsByUserId: vi.fn(),
     };
 
     service = new TasksService(mockTasksRepository);
@@ -115,27 +116,17 @@ describe("TasksService", () => {
 
   describe("getTaskStats", () => {
     it("should get task statistics", async () => {
-      const mockStats = {
-        tasksByStatus: {
-          pending: 5,
-          completed: 3,
-          overdue: 0,
-        },
-        overdueTasks: 2,
-      };
+      const mockStats = [
+        { status: "pending", count: 5 },
+        { status: "completed", count: 3 },
+        { status: "overdue", count: 2 },
+      ];
 
-      mockTasksRepository.getTaskStats.mockResolvedValue([
-        { _id: "pending", count: 5 },
-        { _id: "completed", count: 3 },
-      ]);
-      mockTasksRepository.getOverdueTasksCount.mockResolvedValue(2);
+      mockTasksRepository.getTaskStats.mockResolvedValue(mockStats);
 
       const result = await service.getTaskStats(userId);
 
       expect(mockTasksRepository.getTaskStats).toHaveBeenCalledWith(userId);
-      expect(mockTasksRepository.getOverdueTasksCount).toHaveBeenCalledWith(
-        userId
-      );
       expect(result).toEqual(mockStats);
     });
   });

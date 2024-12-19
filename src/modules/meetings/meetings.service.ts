@@ -17,7 +17,7 @@ export class MeetingsService {
     const skip = (page - 1) * limit;
     const [meetings, total] = await Promise.all([
       this.meetingsRepository.getMeetings(userId, skip, limit),
-      this.meetingsRepository.countMeetings(userId),
+      this.meetingsRepository.countMeetingsByUserId(userId),
     ]);
 
     return {

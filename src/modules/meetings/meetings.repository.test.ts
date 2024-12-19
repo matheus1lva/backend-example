@@ -1,14 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createMockMongooseModel, mockObjectId } from "@/test/utils";
-
-const mockModel = createMockMongooseModel();
-
-vi.mock("./meetings.model", () => ({
-  Meeting: mockModel,
-}));
-
+import { mockObjectId } from "@/test/utils";
 import { MeetingsRepository } from "./meetings.repository";
 import { Meeting } from "./meetings.model";
+
+vi.mock("./meetings.model");
 
 describe("MeetingsRepository", () => {
   let repository: MeetingsRepository;
@@ -23,11 +18,19 @@ describe("MeetingsRepository", () => {
   describe("getMeetings", () => {
     it("should get all meetings for a user", async () => {
       const mockMeetings = [{ _id: meetingId, userId }];
-      vi.mocked(Meeting.find).mockResolvedValue(mockMeetings);
+      const mockQuery = {
+        sort: vi.fn().mockReturnThis(),
+        skip: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue(mockMeetings),
+      };
+      vi.mocked(Meeting.find).mockReturnValue(mockQuery as any);
 
       const result = await repository.getMeetings(userId);
 
       expect(Meeting.find).toHaveBeenCalledWith({ userId });
+      expect(mockQuery.sort).toHaveBeenCalledWith({ createdAt: -1 });
+      expect(mockQuery.skip).toHaveBeenCalledWith(0);
+      expect(mockQuery.limit).toHaveBeenCalledWith(10);
       expect(result).toEqual(mockMeetings);
     });
   });

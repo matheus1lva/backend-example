@@ -1,71 +1,35 @@
 # Fireflies.ai Backend Test
 
-A Node.js backend service for managing meetings, tasks, and transcripts with MongoDB.
+A Node.js backend service for managing meetings, tasks, and transcripts with MongoDB and Redis.
 
 ## Prerequisites
 
 - Node.js v22
 - MongoDB
+- Redis
 - Docker (optional)
 
-## Development Setup
-
-### Local Development
-
-1. Clone the repository:
+## Local Development
 
 ```bash
 git clone <repository-url>
 cd backend-example
-```
-
-2. Install dependencies:
-
-```bash
 npm install
-```
-
-3. Ensure MongoDB is running locally on the default port (27017)
-
-4. Seed the database with initial data:
-
-```bash
 npm run seed
-```
-
-5. Start the development server:
-
-```bash
 npm start
 ```
 
-The server will be available at `http://localhost:3000`
-
 ## Docker Setup
 
-1. Build the Docker image:
-
 ```bash
-docker build -t fireflies-backend .
+docker-compose up -d
 ```
 
-2. Run the container:
+Services:
 
-```bash
-docker run -p 3000:3000 -e MONGODB_URI=mongodb://host.docker.internal:27017/fireflies fireflies-backend
-```
-
-Note: Use `host.docker.internal` to connect to your local MongoDB from inside the container. If you're using Docker Compose or a different MongoDB setup, adjust the connection string accordingly.
-
-## Project Structure
-
-The project follows a clean architecture pattern with the following structure:
-
-- `/routes` - API route definitions
-- `/controllers` - Request handlers
-- `/models` - MongoDB schemas
-- `/services` - Business logic
-- `/middleware` - Custom middleware functions
+- Backend: `localhost:3000`
+- MongoDB: `localhost:27017`
+- Redis: `localhost:6379`
 
 ## Contributing
 

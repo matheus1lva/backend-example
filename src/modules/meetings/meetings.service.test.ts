@@ -24,6 +24,7 @@ describe("MeetingsService", () => {
       getMeetings: vi.fn(),
       getMeetingById: vi.fn(),
       updateMeeting: vi.fn(),
+      countMeetingsByUserId: vi.fn(),
     };
     mockAiService = {
       summarizeMeeting: vi.fn(),
@@ -43,11 +44,21 @@ describe("MeetingsService", () => {
     it("should get all meetings for a user", async () => {
       const mockMeetings = [{ _id: meetingId, userId }];
       mockMeetingsRepository.getMeetings.mockResolvedValue(mockMeetings);
+      mockMeetingsRepository.countMeetingsByUserId.mockResolvedValue(10);
 
       const result = await service.getMeetings(userId);
 
-      expect(mockMeetingsRepository.getMeetings).toHaveBeenCalledWith(userId);
-      expect(result).toEqual(mockMeetings);
+      expect(mockMeetingsRepository.getMeetings).toHaveBeenCalledWith(
+        userId,
+        0,
+        10
+      );
+      expect(result).toEqual({
+        data: mockMeetings,
+        limit: 10,
+        page: 1,
+        total: 10,
+      });
     });
   });
 

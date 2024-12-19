@@ -52,7 +52,7 @@ describe("CreateMeetingSchema", () => {
     };
 
     const result = createMeetingSchema.safeParse(invalidMeeting);
-    expect(result.success).toBe(true); // Currently passes as the schema doesn't enforce non-empty array
+    expect(result.success).toBe(false);
   });
 
   it("should reject invalid date format", () => {
@@ -63,6 +63,6 @@ describe("CreateMeetingSchema", () => {
     };
 
     const result = createMeetingSchema.safeParse(invalidMeeting);
-    expect(result.success).toBe(true); // Currently passes as the schema doesn't validate date format
+    expect(result.success).toBe(false);
   });
 });

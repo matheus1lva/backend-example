@@ -6,6 +6,8 @@ import { mongoConnect, mongoDisconnect } from "@/database";
 import { logger } from "@/utils";
 import "dotenv/config";
 import type { Server } from "node:http";
+import { Container } from "@/config/container";
+import { RedisService } from "@/modules/redis/redis.service";
 
 let server: Server;
 
@@ -15,6 +17,8 @@ async function handleShutdown() {
   });
   try {
     await mongoDisconnect();
+    const redisService = Container.get(RedisService);
+    await redisService.disconnect();
   } catch (err) {
     logger.error("Error disconnecting from MongoDB:", err);
   }

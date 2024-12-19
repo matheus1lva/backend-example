@@ -29,4 +29,8 @@ export class RedisService {
   async del(key: string): Promise<void> {
     await this.client.del(key);
   }
+
+  async disconnect() {
+    await this.client.disconnect();
+  }
 }

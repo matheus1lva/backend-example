@@ -19,15 +19,18 @@ Container.set(TasksRepository, new TasksRepository());
 // Services
 Container.set(AuthService, new AuthService());
 Container.set(AiService, new AiService());
-Container.set(TasksService, new TasksService(Container.get(TasksRepository)));
 Container.set(RedisService, new RedisService());
-
+Container.set(
+  TasksService,
+  new TasksService(Container.get(TasksRepository), Container.get(RedisService))
+);
 Container.set(
   MeetingsService,
   new MeetingsService(
     Container.get(TasksService),
     Container.get(AiService),
-    Container.get(MeetingsRepository)
+    Container.get(MeetingsRepository),
+    Container.get(RedisService)
   )
 );
 

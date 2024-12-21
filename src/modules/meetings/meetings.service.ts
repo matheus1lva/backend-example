@@ -5,6 +5,7 @@ import { Service } from "typedi";
 import { TasksService } from "../tasks/tasks.service";
 import { IMeeting, Meeting } from "./meetings.model";
 import { RedisService } from "@/modules/redis/redis.service";
+import { logger } from "@/utils";
 
 @Service()
 export class MeetingsService {
@@ -129,7 +130,7 @@ export class MeetingsService {
 
       return updatedMeeting;
     } catch (error) {
-      console.error("Error in summarizeMeeting:", error);
+      logger.error("Error in summarizeMeeting:", error);
       throw new Error("Failed to generate meeting summary");
     }
   }

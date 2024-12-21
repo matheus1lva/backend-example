@@ -16,14 +16,11 @@ export class MeetingsRepository {
 
   async updateMeeting(args: Partial<IMeeting>) {
     return Meeting.findOneAndUpdate(
-      { _id: args._id },
+      { _id: args.id },
+      { $set: args },
       {
-        title: args.title,
-        transcript: args.transcript,
-        summary: args.summary,
-        actionItems: args.actionItems,
-      },
-      { new: true }
+        new: true,
+      }
     );
   }
 

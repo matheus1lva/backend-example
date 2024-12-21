@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mockDate, mockObjectId } from "@/test/utils";
+import { mockDate, mockObjectId } from "../../test/utils";
 import { MeetingsService } from "./meetings.service";
 import { Meeting } from "./meetings.model";
-import { httpErrors } from "@/utils";
+import { httpErrors } from "../../utils";
 
 vi.mock("./meetings.model");
-vi.mock("@/modules/ai/ai.service");
+vi.mock("../ai/ai.service");
 
 describe("MeetingsService", () => {
   let service: MeetingsService;

@@ -1,13 +1,12 @@
 import "reflect-metadata";
-import "@/config/container";
-import app from "@/app";
-import { appConfig } from "@/config/app.config";
-import { mongoConnect, mongoDisconnect } from "@/database";
-import { logger } from "@/utils";
 import "dotenv/config";
+import "./config/container";
+import app from "./app";
+import { appConfig, Container } from "./config";
+import { mongoConnect, mongoDisconnect } from "./database";
+import { logger } from "./utils";
 import type { Server } from "node:http";
-import { Container } from "@/config/container";
-import { RedisService } from "@/modules/redis/redis.service";
+import { RedisService } from "./modules/redis/redis.service";
 
 let server: Server;
 

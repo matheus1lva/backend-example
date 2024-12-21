@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { createClient } from "redis";
-import { appConfig } from "@/config/app.config";
+import { appConfig } from "../../config/app.config";
 
 @Service()
 export class RedisService {

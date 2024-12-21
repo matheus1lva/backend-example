@@ -1,9 +1,10 @@
-import { logger } from "@/utils/logger";
+import { logger } from "../utils/logger";
 import mongoose from "mongoose";
+import { appConfig } from "../config/app.config";
 
 export async function mongoConnect() {
   try {
-    await mongoose.connect("mongodb://localhost:27017/meetingbot");
+    await mongoose.connect(appConfig.DATABASE_URL);
   } catch (err) {
     logger.error("Error connecting to MongoDB:", err);
   }

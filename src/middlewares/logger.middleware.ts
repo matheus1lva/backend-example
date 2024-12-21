@@ -1,4 +1,4 @@
-import { logger } from "@/utils";
+import { logger } from "../utils";
 import morgan from "morgan";
 
 export const loggerMiddleware = morgan(

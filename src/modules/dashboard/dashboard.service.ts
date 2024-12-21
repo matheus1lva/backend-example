@@ -1,8 +1,8 @@
 import { Service } from "typedi";
-import { DashboardData } from "@/modules/dashboard/types";
-import { MeetingsRepository } from "@/modules/meetings/meetings.repository";
-import { TasksRepository } from "@/modules/tasks/tasks.repository";
-import { RedisService } from "@/modules/redis/redis.service";
+import { DashboardData } from "./types";
+import { MeetingsRepository } from "../meetings/meetings.repository";
+import { TasksRepository } from "../tasks/tasks.repository";
+import { RedisService } from "../redis/redis.service";
 
 @Service()
 export class DashboardService {

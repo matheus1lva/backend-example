@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Service } from "typedi";
 import { TasksService } from "./tasks.service";
-import { logger } from "@/utils";
+import { logger } from "../../utils";
 
 @Service()
 export class TasksController {

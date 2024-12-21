@@ -1,4 +1,4 @@
-import { appConfig } from "@/config/app.config";
+import { appConfig } from "../config/app.config";
 import compression from "compression";
 import { type RequestHandler } from "express";
 

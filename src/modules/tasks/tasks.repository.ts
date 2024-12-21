@@ -1,5 +1,5 @@
-import { ITask, Task } from "@/modules/tasks/tasks.model";
-import { CreateTask } from "@/modules/tasks/types/create-task.type";
+import { ITask, Task } from "./tasks.model";
+import { CreateTask } from "./types/create-task.type";
 import { Service } from "typedi";
 
 @Service()

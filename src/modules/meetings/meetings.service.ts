@@ -1,11 +1,11 @@
-import { AiService } from "@/modules/ai/ai.service";
-import { MeetingsRepository } from "@/modules/meetings/meetings.repository";
+import { AiService } from "../ai/ai.service";
+import { MeetingsRepository } from "./meetings.repository";
 import { httpErrors } from "throw-http-errors/dist/httpErrors";
 import { Service } from "typedi";
 import { TasksService } from "../tasks/tasks.service";
 import { IMeeting, Meeting } from "./meetings.model";
-import { RedisService } from "@/modules/redis/redis.service";
-import { logger } from "@/utils";
+import { RedisService } from "../redis/redis.service";
+import { logger } from "../../utils";
 
 @Service()
 export class MeetingsService {

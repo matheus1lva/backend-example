@@ -1,5 +1,5 @@
-import { CreateTask } from "@/modules/tasks/types/create-task.type";
-import { createMockMongooseModel, mockDate, mockObjectId } from "@/test/utils";
+import { CreateTask } from "./types/create-task.type";
+import { createMockMongooseModel, mockDate, mockObjectId } from "../../test/utils";
 import { Types } from "mongoose";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Task } from "./tasks.model";

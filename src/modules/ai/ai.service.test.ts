@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { AiService } from "./ai.service";
 import OpenAI from "openai";
-import { logger } from "@/utils";
+import { logger } from "../../utils";
 
 vi.mock("openai");
-vi.mock("@/utils", () => ({
+vi.mock("../../utils", () => ({
   logger: {
     warn: vi.fn(),
     error: vi.fn(),

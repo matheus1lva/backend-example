@@ -1,5 +1,5 @@
-import { appConfig } from "@/config/app.config";
-import { httpErrors } from "@/utils";
+import { appConfig } from "../../config/app.config";
+import { httpErrors } from "../../utils";
 import jwt from "jsonwebtoken";
 import { Service } from "typedi";
 

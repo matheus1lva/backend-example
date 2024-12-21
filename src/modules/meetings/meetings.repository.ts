@@ -1,4 +1,4 @@
-import { IMeeting, Meeting } from "@/modules/meetings/meetings.model";
+import { IMeeting, Meeting } from "./meetings.model";
 import { Types } from "mongoose";
 import { Service } from "typedi";
 

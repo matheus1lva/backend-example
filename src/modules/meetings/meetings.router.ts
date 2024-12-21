@@ -1,5 +1,5 @@
-import { createMeetingSchema } from "@/modules/meetings/schemas/create-meeting-input.schema";
-import { updateTranscriptSchema } from "@/modules/meetings/schemas/update-transcript.schema";
+import { createMeetingSchema } from "./schemas/create-meeting-input.schema";
+import { updateTranscriptSchema } from "./schemas/update-transcript.schema";
 import express from "express";
 import { Container } from "typedi";
 import { validateRequestBody } from "zod-express-middleware";

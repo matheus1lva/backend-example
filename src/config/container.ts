@@ -1,16 +1,16 @@
 import "reflect-metadata";
 import { Container } from "typedi";
-import { DashboardService } from "@/modules/dashboard/dashboard.service";
-import { DashboardController } from "@/modules/dashboard/dashboard.controller";
-import { MeetingsRepository } from "@/modules/meetings/meetings.repository";
-import { TasksRepository } from "@/modules/tasks/tasks.repository";
-import { MeetingsService } from "@/modules/meetings/meetings.service";
-import { MeetingsController } from "@/modules/meetings/meetings.controller";
-import { TasksService } from "@/modules/tasks/tasks.service";
-import { TasksController } from "@/modules/tasks/tasks.controller";
-import { AuthService } from "@/modules/auth/auth.service";
-import { AiService } from "@/modules/ai/ai.service";
-import { RedisService } from "@/modules/redis/redis.service";
+import { DashboardService } from "../modules/dashboard/dashboard.service";
+import { DashboardController } from "../modules/dashboard/dashboard.controller";
+import { MeetingsRepository } from "../modules/meetings/meetings.repository";
+import { TasksRepository } from "../modules/tasks/tasks.repository";
+import { MeetingsService } from "../modules/meetings/meetings.service";
+import { MeetingsController } from "../modules/meetings/meetings.controller";
+import { TasksService } from "../modules/tasks/tasks.service";
+import { TasksController } from "../modules/tasks/tasks.controller";
+import { AuthService } from "../modules/auth/auth.service";
+import { AiService } from "../modules/ai/ai.service";
+import { RedisService } from "../modules/redis/redis.service";
 
 // Repositories
 Container.set(MeetingsRepository, new MeetingsRepository());

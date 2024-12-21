@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { mockObjectId } from "@/test/utils";
+import { mockObjectId } from "../../test/utils";
 import { MeetingsRepository } from "./meetings.repository";
 import { Meeting } from "./meetings.model";
 

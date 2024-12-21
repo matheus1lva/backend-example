@@ -1,4 +1,4 @@
-import { taskSchema } from "@/modules/tasks/schemas/tasks.schema";
+import { taskSchema } from "../../tasks/schemas/tasks.schema";
 import { z } from "zod";
 
 export const summaryAndActionsResponseSchema = z.object({

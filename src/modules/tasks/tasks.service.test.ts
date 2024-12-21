@@ -1,4 +1,4 @@
-import { mockDate, mockObjectId } from "@/test/utils";
+import { mockDate, mockObjectId } from "../../test/utils";
 import { Types } from "mongoose";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TasksService } from "./tasks.service";

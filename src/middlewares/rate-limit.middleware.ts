@@ -1,5 +1,5 @@
-import { appConfig } from "@/config/app.config";
-import { logger } from "@/utils";
+import { appConfig } from "../config/app.config";
+import { logger } from "../utils";
 import rateLimit from "express-rate-limit";
 
 export const rateLimitMiddleware = rateLimit({

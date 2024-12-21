@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { Service } from "typedi";
 import { ITask } from "./tasks.model";
 import { TasksRepository } from "./tasks.repository";
-import { RedisService } from "@/modules/redis/redis.service";
+import { RedisService } from "../redis/redis.service";
 
 @Service()
 export class TasksService {

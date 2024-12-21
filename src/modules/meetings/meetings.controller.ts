@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { Service } from "typedi";
 import { AuthService } from "../auth/auth.service";
 import { MeetingsService } from "./meetings.service";
-import { logger } from "@/utils";
+import { logger } from "../../utils";
 
 @Service()
 export class MeetingsController {

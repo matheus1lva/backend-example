@@ -1,4 +1,4 @@
-type AppEnv = "development" | "production" | "staging";
+export type AppEnv = "development" | "production" | "staging";
 export interface AppConfig {
   APP_ENV: AppEnv;
   PORT: number;

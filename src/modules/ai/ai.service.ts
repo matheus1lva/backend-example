@@ -1,9 +1,9 @@
 import {
   SummaryAndActionsResponseParams,
   summaryAndActionsResponseSchema,
-} from "@/modules/meetings/schemas/summary-response.schema";
-import { MeetingSummaryRequest } from "@/modules/meetings/types";
-import { logger } from "@/utils";
+} from "../meetings/schemas/summary-response.schema";
+import { MeetingSummaryRequest } from "../meetings/types";
+import { logger } from "../../utils";
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { Service } from "typedi";

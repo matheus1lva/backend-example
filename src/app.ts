@@ -6,10 +6,10 @@ import {
   rateLimitMiddleware,
   securityMiddleware,
   urlencodedMiddleware,
-} from "@/middlewares";
-import { dashboardRoutes } from "@/modules/dashboard/dashboard.router";
-import { meetingRoutes } from "@/modules/meetings/meetings.router";
-import { taskRoutes } from "@/modules/tasks/tasks.router";
+} from "./middlewares";
+import { dashboardRoutes } from "./modules/dashboard/dashboard.router";
+import { meetingRoutes } from "./modules/meetings/meetings.router";
+import { taskRoutes } from "./modules/tasks/tasks.router";
 import express from "express";
 
 const app = express();

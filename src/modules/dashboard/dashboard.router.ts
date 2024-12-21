@@ -1,6 +1,6 @@
-import { DashboardController } from "@/modules/dashboard/dashboard.controller";
+import { DashboardController } from "./dashboard.controller";
 import express, { Request } from "express";
-import { Container } from "@/config/container";
+import { Container } from "../../config/container";
 
 const router = express.Router();
 const dashboardController = Container.get(DashboardController);

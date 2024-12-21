@@ -1,15 +1,27 @@
-version: "3.8"
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        APP_ENV: production
+        PORT: 3000
+        DATABASE_URL: mongodb://mongodb:27017/meetingbot
+        LOG_LEVEL: info
+        JWT_SECRET: your-super-secret-jwt-key-here
+        JWT_EXPIRES_IN: 1d
+        OPENAI_API_KEY: ${OPENAI_API_KEY}
+        REDIS_URL: redis://redis:6379
     container_name: backend-app
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - APP_ENV=production
       - PORT=3000
-      - MONGODB_URI=mongodb://mongodb:27017/fireflies
+      - DATABASE_URL=mongodb://mongodb:27017/meetingbot
+      - LOG_LEVEL=info
+      - JWT_SECRET=your-super-secret-jwt-key-here
+      - JWT_EXPIRES_IN=1d
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - REDIS_URL=redis://redis:6379
     depends_on:
       - mongodb
@@ -18,10 +30,11 @@ services:
       - backend-network
 
   mongodb:
-    image: mongo:latest
     container_name: mongodb
+    image: mongo:latest
+    restart: unless-stopped
     ports:
-      - "27017:27017"
+      - 27017:27017
     volumes:
       - mongodb_data:/data/db
     networks:
@@ -45,4 +58,3 @@ volumes:
 
 networks:
   backend-network:
-    driver: bridge

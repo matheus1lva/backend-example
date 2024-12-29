@@ -14,9 +14,9 @@ A Node.js backend service for managing meetings, tasks, and transcripts with Mon
 ```bash
 git clone <repository-url>
 cd backend-example
-npm install
-npm run seed
-npm start
+yarn install
+yarn seed
+yarn start
 ```
 
 ## Docker Setup
